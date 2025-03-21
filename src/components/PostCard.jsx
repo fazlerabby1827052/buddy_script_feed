@@ -10,16 +10,17 @@ import "./tooltip.css";
 import Comment from "./Comment";
 
 export default function PostCard({ obj, allpost, setAllpost }) {
+  const [commenttoggle,setcommenttoggle]=useState(true)
   const [cu, scu] = useState(null);
   const [posttoggle, setposttoggle] = useState(false);
   const [loading, setloading] = useState(true);
-  const commentbox=useRef();
+  const commentbox = useRef();
   useEffect(() => {
     setloading(false);
     setAllpost(getFromLocalStorage("post"));
     scu(getFromLocalStoragetwo("currentUser"));
     // console.log("objadfadsf",obj);
-    
+
     // console.log(obj.text,obj.likedusername);
 
     // setlikes(obj.likedusername.length)
@@ -32,49 +33,28 @@ export default function PostCard({ obj, allpost, setAllpost }) {
     setposttoggle(!pt);
   };
 
-  // const handlecomment=(e)=>{
-  //   // e.preventDefault();
-  //   if(e.key=='Enter'){
-  //   const value=e.target.value;
-  //   const valuewithtrim=value.trim();
-  //   if(valuewithtrim){
-  //     const allpostcopy=allpost;
-  //     allpostcopy.forEach((post)=>{if(post===obj){
-  //       post.comment.push({text:valuewithtrim,reply:[]});
-  //     }})
-      
-  //     setToLocalStorage("post",allpostcopy);
-  //     console.log("allpostcopy",allpostcopy);
-  //     setAllpost(allpostcopy);
-  //     console.log("allpost",allpost)
-
-  //   }
-  //   e.target.value="";
-
-  //   e.target.blur();
-  //   }}
-
-
   const handlecomment = (e) => {
-    
-  
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       const value = e.target.value;
       const valueWithTrim = value.trim();
-  
-      
+
       if (valueWithTrim) {
-        
-        const allpostCopy = [...allpost]; 
-        const postIndex = allpostCopy.findIndex(post => post === obj);
+        const allpostCopy = [...allpost];
+        const postIndex = allpostCopy.findIndex((post) => post === obj);
         if (postIndex !== -1) {
-          allpostCopy[postIndex].comment.unshift({ text: valueWithTrim,id:Date.now(),creator:cu, reply: [] });
+          allpostCopy[postIndex].comment.unshift({
+            text: valueWithTrim,
+            id: Date.now(),
+            creator: cu,
+            reply: [],
+          });
         }
-        setToLocalStorage("post", allpostCopy); 
-        setAllpost(allpostCopy);  
-  
+        setToLocalStorage("post", allpostCopy);
+        setAllpost(allpostCopy);
+
         e.target.value = "";
         e.target.blur();
+        setcommenttoggle(!commenttoggle)
       }
     }
   };
@@ -90,26 +70,26 @@ export default function PostCard({ obj, allpost, setAllpost }) {
     setposttoggle(false);
   };
 
-  const handleedit=(e)=>{
+  const handleedit = (e) => {
     e.preventDefault();
-    if(obj.creator!=cu){
+    if (obj.creator != cu) {
       alert("You can't delete others post");
       return;
     }
-    const promptitem=prompt("Edit this post",obj.text);
-    if(promptitem===null || promptitem.trim()===""){
-      alert("Please writesomething");
+    const promptitem = prompt("Edit this post", obj.text);
+    if (promptitem === null || promptitem.trim() === "") {
+      alert("Please write something");
       return;
     }
-    const allpostcopy=[...allpost];
-    const index=allpostcopy.findIndex(post=>post==obj);
-    if(index!=-1){
-      allpost[index].text=promptitem;
+    const allpostcopy = [...allpost];
+    const index = allpostcopy.findIndex((post) => post == obj);
+    if (index != -1) {
+      allpost[index].text = promptitem;
     }
-    setToLocalStorage("post",allpostcopy);
+    setToLocalStorage("post", allpostcopy);
     setAllpost(allpostcopy);
     setposttoggle(false);
-  }
+  };
 
   const handlelike = (e) => {
     e.preventDefault();
@@ -154,7 +134,7 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                     {obj.creator}
                   </h4>
                   <p class="_feed_inner_timeline_post_box_para">
-                    {obj.dif} minute ago .<a href="#0">Public</a>
+                    {obj.dif} minute ago .<a href="">Public</a>
                   </p>
                 </div>
               </div>
@@ -184,50 +164,13 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                 >
                   <ul class="_feed_timeline_dropdown_list">
                     <li class="_feed_timeline_dropdown_item">
-                      <a href="#0" class="_feed_timeline_dropdown_link">
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            fill="none"
-                            viewBox="0 0 18 18"
-                          >
-                            <path
-                              stroke="#1890FF"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="1.2"
-                              d="M14.25 15.75L9 12l-5.25 3.75v-12a1.5 1.5 0 011.5-1.5h7.5a1.5 1.5 0 011.5 1.5v12z"
-                            />
-                          </svg>
-                        </span>
-                        Save Post
-                      </a>
-                    </li>
-                    <li class="_feed_timeline_dropdown_item">
-                      <a href="#0" class="_feed_timeline_dropdown_link">
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="22"
-                            fill="none"
-                            viewBox="0 0 20 22"
-                          >
-                            <path
-                              fill="#377DFF"
-                              fill-rule="evenodd"
-                              d="M7.547 19.55c.533.59 1.218.915 1.93.915.714 0 1.403-.324 1.938-.916a.777.777 0 011.09-.056c.318.284.344.77.058 1.084-.832.917-1.927 1.423-3.086 1.423h-.002c-1.155-.001-2.248-.506-3.077-1.424a.762.762 0 01.057-1.083.774.774 0 011.092.057zM9.527 0c4.58 0 7.657 3.543 7.657 6.85 0 1.702.436 2.424.899 3.19.457.754.976 1.612.976 3.233-.36 4.14-4.713 4.478-9.531 4.478-4.818 0-9.172-.337-9.528-4.413-.003-1.686.515-2.544.973-3.299l.161-.27c.398-.679.737-1.417.737-2.918C1.871 3.543 4.948 0 9.528 0zm0 1.535c-3.6 0-6.11 2.802-6.11 5.316 0 2.127-.595 3.11-1.12 3.978-.422.697-.755 1.247-.755 2.444.173 1.93 1.455 2.944 7.986 2.944 6.494 0 7.817-1.06 7.988-3.01-.003-1.13-.336-1.681-.757-2.378-.526-.868-1.12-1.851-1.12-3.978 0-2.514-2.51-5.316-6.111-5.316z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                        </span>
-                        Turn On Notification
-                      </a>
-                    </li>
-                    <li class="_feed_timeline_dropdown_item">
-                      <a href="#0" class="_feed_timeline_dropdown_link">
+                      <a
+                        href=""
+                        onClick={(e) => {
+                          e.preventDefault();
+                        }}
+                        class="_feed_timeline_dropdown_link"
+                      >
                         <span>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -248,61 +191,71 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                         Hide
                       </a>
                     </li>
-                    <li class="_feed_timeline_dropdown_item">
-                      <a href="" onClick={handleedit} class="_feed_timeline_dropdown_link">
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            fill="none"
-                            viewBox="0 0 18 18"
+                    {cu === obj.creator ? (
+                      <>
+                        <li class="_feed_timeline_dropdown_item">
+                          <a
+                            href=""
+                            onClick={handleedit}
+                            class="_feed_timeline_dropdown_link"
                           >
-                            <path
-                              stroke="#1890FF"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="1.2"
-                              d="M8.25 3H3a1.5 1.5 0 00-1.5 1.5V15A1.5 1.5 0 003 16.5h10.5A1.5 1.5 0 0015 15V9.75"
-                            />
-                            <path
-                              stroke="#1890FF"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="1.2"
-                              d="M13.875 1.875a1.591 1.591 0 112.25 2.25L9 11.25 6 12l.75-3 7.125-7.125z"
-                            />
-                          </svg>
-                        </span>
-                        Edit Post
-                      </a>
-                    </li>
-                    <li class="_feed_timeline_dropdown_item">
-                      <a
-                        href=""
-                        onClick={handlepostdelete}
-                        class="_feed_timeline_dropdown_link"
-                      >
-                        <span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            fill="none"
-                            viewBox="0 0 18 18"
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                fill="none"
+                                viewBox="0 0 18 18"
+                              >
+                                <path
+                                  stroke="#1890FF"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="1.2"
+                                  d="M8.25 3H3a1.5 1.5 0 00-1.5 1.5V15A1.5 1.5 0 003 16.5h10.5A1.5 1.5 0 0015 15V9.75"
+                                />
+                                <path
+                                  stroke="#1890FF"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="1.2"
+                                  d="M13.875 1.875a1.591 1.591 0 112.25 2.25L9 11.25 6 12l.75-3 7.125-7.125z"
+                                />
+                              </svg>
+                            </span>
+                            Edit Post
+                          </a>
+                        </li>
+                        <li class="_feed_timeline_dropdown_item">
+                          <a
+                            href=""
+                            onClick={handlepostdelete}
+                            class="_feed_timeline_dropdown_link"
                           >
-                            <path
-                              stroke="#1890FF"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="1.2"
-                              d="M2.25 4.5h13.5M6 4.5V3a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 0112 3v1.5m2.25 0V15a1.5 1.5 0 01-1.5 1.5h-7.5a1.5 1.5 0 01-1.5-1.5V4.5h10.5zM7.5 8.25v4.5M10.5 8.25v4.5"
-                            />
-                          </svg>
-                        </span>
-                        Delete Post
-                      </a>
-                    </li>
+                            <span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                fill="none"
+                                viewBox="0 0 18 18"
+                              >
+                                <path
+                                  stroke="#1890FF"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="1.2"
+                                  d="M2.25 4.5h13.5M6 4.5V3a1.5 1.5 0 011.5-1.5h3A1.5 1.5 0 0112 3v1.5m2.25 0V15a1.5 1.5 0 01-1.5 1.5h-7.5a1.5 1.5 0 01-1.5-1.5V4.5h10.5zM7.5 8.25v4.5M10.5 8.25v4.5"
+                                />
+                              </svg>
+                            </span>
+                            Delete Post
+                          </a>
+                        </li>
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -318,44 +271,25 @@ export default function PostCard({ obj, allpost, setAllpost }) {
           </div>
           <div class="_feed_inner_timeline_total_reacts _padd_r24 _padd_l24 _mar_b26">
             <div class="_feed_inner_timeline_total_reacts_image">
-              {/* <img
-            src="assets/images/react_img1.png"
-            alt="Image"
-            class="_react_img1"
-          />
-          <img
-            src="assets/images/react_img2.png"
-            alt="Image"
-            class="_react_img"
-          />
-          <img
-            src="assets/images/react_img3.png"
-            alt="Image"
-            class="_react_img _rect_img_mbl_none"
-          />
-          <img
-            src="assets/images/react_img4.png"
-            alt="Image"
-            class="_react_img _rect_img_mbl_none"
-          />
-          <img
-            src="assets/images/react_img5.png"
-            alt="Image"
-            class="_react_img _rect_img_mbl_none"
-          />
-          <p class="_feed_inner_timeline_total_reacts_para">9+</p> */}
-              <div class="tooltip-container">
-                <button>{`${obj.likedusername.length} like`}</button>
-                <div class="tooltip">
-                  {obj.likedusername?.map((liker) => (
-                    <div>{liker}</div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div class="_feed_inner_timeline_total_reacts_txt">
               
+              <div class="tooltip-container">
+                <button>
+                  {`${obj.likedusername.length} like`}
+                  {obj.likedusername.length > 1 && `s`}
+                </button>
+                {obj.likedusername.length ? (
+                  <div class="tooltip">
+                    {obj.likedusername?.map((liker,index) => (
+                      <div key={index}>{liker}</div>
+                    ))}
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <div></div>
             </div>
+            <div class="_feed_inner_timeline_total_reacts_txt">{`${obj.comment.length} comment`}{obj.comment.length>1?"s":""}</div>
           </div>
           <div class="_feed_inner_timeline_reaction">
             <button
@@ -399,7 +333,15 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                 </span>
               </span>
             </button>
-            <button onClick={()=>{ commentbox.current.focus() }} class="_feed_inner_timeline_reaction_comment _feed_reaction">
+            <button
+              onClick={() => {
+                setcommenttoggle(!commenttoggle);
+                commentbox.current.focus();
+                  
+                
+              }}
+              class="_feed_inner_timeline_reaction_comment _feed_reaction"
+            >
               <span class="_feed_inner_timeline_reaction_link">
                 {" "}
                 <span>
@@ -450,7 +392,7 @@ export default function PostCard({ obj, allpost, setAllpost }) {
             </button>
           </div>
           <div class="_feed_inner_timeline_cooment_area">
-            <div class="_feed_inner_comment_box">
+            <div class={`_feed_inner_comment_box ${commenttoggle?'displayhidden':''}`}>
               <form class="_feed_inner_comment_box_form">
                 <div class="_feed_inner_comment_box_content">
                   <div class="_feed_inner_comment_box_content_image">
@@ -509,12 +451,20 @@ export default function PostCard({ obj, allpost, setAllpost }) {
               </form>
             </div>
           </div>
-          {allpost?.map((post)=>{
-            console.log("ooo")
-            if(post===obj){
-              
+          {allpost?.map((post) => {
+            console.log("ooo");
+            if (post === obj) {
               // console.log(post.comment[0])
-              return post.comment?.map((com,id)=>(<Comment obj={obj}  allpost={allpost} setAllpost={setAllpost} cu={cu} com={com} key={id}/>))
+              return post.comment?.map((com, id) => (
+                <Comment
+                  obj={obj}
+                  allpost={allpost}
+                  setAllpost={setAllpost}
+                  cu={cu}
+                  com={com}
+                  key={id}
+                />
+              ));
             }
           })}
         </div>
@@ -524,5 +474,3 @@ export default function PostCard({ obj, allpost, setAllpost }) {
     </div>
   );
 }
-
-

@@ -33,3 +33,11 @@
     padding: 8px 16px; /* Customize the padding as needed */
     cursor: pointer; /* Makes the cursor a hand icon when hovering over the button */
   }
+
+
+
+  .displayhidden{
+    display: none;
+  }
+
+  

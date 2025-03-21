@@ -1,9 +1,12 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Reply from "./Reply";
 import { setToLocalStorage } from "../utils/localstorage";
+import "./tooltip.css";
 
 export default function Comment({ obj, allpost, setAllpost, cu, com }) {
     const commentref=useRef();
+
+    const [commenttoggle,setcommenttoggle]=useState(true);
     
     const handlereply=(e)=>{
         if(e.key=='Enter'){
@@ -75,6 +78,8 @@ export default function Comment({ obj, allpost, setAllpost, cu, com }) {
                     <li>
                       <span onClick={()=>{
                         commentref.current.focus();
+                        setcommenttoggle(!commenttoggle)
+                        
                       }}>Reply.</span>
                     </li>
                     <li>
@@ -97,7 +102,7 @@ export default function Comment({ obj, allpost, setAllpost, cu, com }) {
                     })
                 }
             })}
-            <div class="_feed_inner_comment_box">
+            <div class={`_feed_inner_comment_box ${commenttoggle?'displayhidden':''}`}>
               <form class="_feed_inner_comment_box_form">
                 <div class="_feed_inner_comment_box_content">
                   <div class="_feed_inner_comment_box_content_image">
@@ -107,10 +112,10 @@ export default function Comment({ obj, allpost, setAllpost, cu, com }) {
                       class="_comment_img"
                     />
                   </div>
-                  <div class="_feed_inner_comment_box_content_txt">
+                  <div class={`_feed_inner_comment_box_content_txt `}>
                     <textarea
                         onKeyDown={handlereply}
-                      class="form-control _comment_textarea"
+                      class={`form-control _comment_textarea `}
                       ref={commentref}
                       placeholder="Write a Reply"
                       id="floatingTextarea2"
