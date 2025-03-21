@@ -8,13 +8,15 @@ import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
 import "./tooltip.css";
 import Comment from "./Comment";
-
+import Modal from "./Modal";
 export default function PostCard({ obj, allpost, setAllpost }) {
   const [commenttoggle,setcommenttoggle]=useState(true)
   const [cu, scu] = useState(null);
   const [posttoggle, setposttoggle] = useState(false);
   const [loading, setloading] = useState(true);
   const commentbox = useRef();
+
+  
   useEffect(() => {
     setloading(false);
     setAllpost(getFromLocalStorage("post"));
@@ -98,7 +100,12 @@ export default function PostCard({ obj, allpost, setAllpost }) {
     const npc = np.map((post) => {
       if (post.timeofcreate === obj.timeofcreate) {
         if (post.likedusername.includes(cu)) {
-          return post;
+          const filteruser=post.likedusername.filter(liker=>liker!=cu);
+          console.log(filteruser);
+          return {
+            ...post,
+            likedusername:filteruser
+          };
         } else {
           return {
             ...post,
@@ -196,6 +203,7 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                         <li class="_feed_timeline_dropdown_item">
                           <a
                             href=""
+
                             onClick={handleedit}
                             class="_feed_timeline_dropdown_link"
                           >
@@ -260,6 +268,7 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                 </div>
               </div>
             </div>
+            
             <h4 class="_feed_inner_timeline_post_title">{obj.text}</h4>
             <div class="_feed_inner_timeline_image">
               <img
@@ -329,7 +338,7 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                       </g>{" "}
                     </g>
                   </svg>{" "}
-                  Like
+                  {obj.likedusername.includes(cu)? `Unlike`:`Like`}
                 </span>
               </span>
             </button>
@@ -403,6 +412,7 @@ export default function PostCard({ obj, allpost, setAllpost }) {
                     />
                   </div>
                   <div class="_feed_inner_comment_box_content_txt">
+                    {commenttoggle || commentbox.current.focus()}
                     <textarea
                       onKeyDown={handlecomment}
                       class="form-control _comment_textarea"
@@ -452,7 +462,6 @@ export default function PostCard({ obj, allpost, setAllpost }) {
             </div>
           </div>
           {allpost?.map((post) => {
-            console.log("ooo");
             if (post === obj) {
               // console.log(post.comment[0])
               return post.comment?.map((com, id) => (
