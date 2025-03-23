@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 export default function Feed() {
   const currentuser=useSelector(state=>state.counter.currentUser);
   const navigate=useNavigate();
-  // const
   useEffect(()=>{
     if(currentuser===null){
       navigate('/login');
