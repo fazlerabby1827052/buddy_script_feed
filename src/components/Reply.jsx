@@ -1,11 +1,13 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
-export default function Reply({comtext,cu}) {
+export default function Reply({comtext}) {
+  const cu=useSelector(state=>state.counter.currentUser);
   return (
     <div className="_comment_main">
         
         <div class="_comment_image">
-                <a href="profile.html" class="_comment_image_link">
+                <a href="" class="_comment_image_link">
                   <img
                     src="assets/images/txt_img.png"
                     alt=""

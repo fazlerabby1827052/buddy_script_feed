@@ -2,9 +2,15 @@ import React, { useRef, useState } from "react";
 import Reply from "./Reply";
 import { setToLocalStorage } from "../utils/localstorage";
 import "./tooltip.css";
+import { useDispatch, useSelector } from "react-redux";
+import { setpost } from "../CounterSlice";
 
-export default function Comment({ obj, allpost, setAllpost, cu, com }) {
+export default function Comment({ obj,  com }) {
     const commentref=useRef();
+    const cu=useSelector(state=>state.counter.currentUser);
+    const allpostimmutable=useSelector(state=>state.counter.allpost);
+    const allpost=allpostimmutable.map(post=>({...post}));
+    const dispatch=useDispatch();
 
     const [commenttoggle,setcommenttoggle]=useState(true);
     
@@ -14,17 +20,41 @@ export default function Comment({ obj, allpost, setAllpost, cu, com }) {
             const trimdata=replycom.trim();
             if(trimdata){
                 const allpostCopy = [...allpost]; 
-                const postIndex = allpostCopy.findIndex(post => post === obj);
-                if (postIndex !== -1) {
-                    const allcomment=[...allpostCopy[postIndex].comment];
-                    const commentIndex=allcomment.findIndex(comment=>comment==com)
-                    if(commentIndex!=-1){
-                        allcomment[commentIndex].reply.unshift({data:trimdata,creator:cu});
-                    }
-                  }
+                const postIndex = allpostCopy.findIndex(post => post.timeofcreate === obj.timeofcreate);
+                // if (postIndex !== -1) {
+                //     const allcomment=[...allpostCopy[postIndex].comment];
+                //     const commentIndex=allcomment.findIndex(comment=>comment==com)
+                //     if(commentIndex!=-1){
+                //         allcomment[commentIndex].reply.unshift({data:trimdata,creator:cu});
+                //     }
+                //   }
 
-                setToLocalStorage("post",allpostCopy);
-                setAllpost(allpostCopy)
+                // console.log(postIndex)
+
+                if(postIndex!==1){
+                  const post = allpostCopy[postIndex];
+                  const allcomment = post.comment.map(comment => ({ ...comment }));
+                  const commentIndex = allcomment.findIndex(comment => comment.id === com.id);
+                  // console.log(commentIndex)
+                   if(commentIndex!==-1){
+                    const commentCopy = {
+                      ...allcomment[commentIndex],
+                      reply: [...allcomment[commentIndex].reply]
+                    };
+                    // console.log(commentCopy)
+                    commentCopy.reply.unshift({ data: trimdata, creator: cu });
+                    allcomment[commentIndex] = commentCopy;
+                    const postCopy = {
+                      ...post,
+                      comment: allcomment
+                    };
+                    allpostCopy[postIndex] = postCopy;
+                   }
+                }
+                // console.log(allpostCopy)
+                
+                dispatch(setpost(allpostCopy))
+
             }
             e.target.value="";
             e.target.blur();
@@ -97,7 +127,7 @@ export default function Comment({ obj, allpost, setAllpost, cu, com }) {
                 if(post.timeofcreate===obj.timeofcreate){
                     return post.comment.map(com2=>{
                         if(com2.id===com.id){
-                            return com2.reply.map((comtext,id)=>(<Reply comtext={comtext} cu={cu} key={id}/>))
+                            return com2.reply.map((comtext,id)=>(<Reply comtext={comtext}  key={id}/>))
                         }
                     })
                 }

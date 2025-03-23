@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getFromLocalStoragetwo } from "../utils/localstorage";
+import { useDispatch, useSelector } from "react-redux";
+import { removecurrentuser } from "../CounterSlice";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const [currentuser, setcurrentuser] = useState(
-    getFromLocalStoragetwo("currentUser")
-  );
-  
+  const dispatch=useDispatch()
+  const currentuser=useSelector(state=>state.counter.currentUser);
   const [dropdowntoggle,setdropdowntoggle]=useState(false);
 
   const handleonclick = (e) => {
     e.preventDefault();
-    localStorage.removeItem("currentUser");
-    setcurrentuser(null);
+    dispatch(removecurrentuser())
     navigate("/login");
   };
 

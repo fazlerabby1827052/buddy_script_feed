@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { setToLocalStorage } from "../utils/localstorage";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setuser } from "../CounterSlice";
 
 const userObject = {
   user: "",
@@ -16,6 +18,10 @@ export default function Registration() {
     password: "",
     confirmpassword: "",
   });
+
+  const allusers=useSelector(state=>state.counter.alluser);
+  const dispatch=useDispatch();
+  
 
   const [userData, setUserData] = useState({
     user: "",
@@ -47,8 +53,8 @@ export default function Registration() {
       return;
     }
 
-    const allusersjson = localStorage.getItem("user") || [];
-    const allusers = allusersjson.length ? JSON.parse(allusersjson) : [];
+    
+    
     let flag = false;
     allusers?.forEach((element) => {
       if (element.user === formData.user) {
@@ -67,10 +73,10 @@ export default function Registration() {
 	}
 
     const users = [...allusers, userData];
-	setToLocalStorage("user",users);
+    dispatch(setuser(users))
 
     setFormData({ user: "", password: "",confirmpassword:"" });
-    setUserData(userObject);
+    
 	navigate('/login')
   };
 

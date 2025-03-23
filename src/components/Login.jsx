@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setcurrentuser } from "../CounterSlice";
 
 
 
@@ -9,7 +11,8 @@ export default function Login() {
         user: "",
         password: "",
       });
-
+      const allusers=useSelector(state=>state.counter.alluser);
+      const dispatch=useDispatch();
 
       const changehandle = (e) => {
         e.preventDefault();
@@ -20,13 +23,12 @@ export default function Login() {
 
       const handlesubmit = (e) => {
         e.preventDefault();
-        const allusersjson=localStorage.getItem("user") || [];
-        const allusers=allusersjson.length?JSON.parse(allusersjson):[];
+        
         let flag=false;
         allusers?.forEach((element)=>{
           if(element.user===formData.user && element.password===formData.password){
             flag=true;
-            localStorage.setItem("currentUser",JSON.stringify(formData.user))
+            dispatch(setcurrentuser(element.user))
             navigate('/feed')
             return;
           }

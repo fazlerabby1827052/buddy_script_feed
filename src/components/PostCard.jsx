@@ -9,25 +9,19 @@ import "react-tooltip/dist/react-tooltip.css";
 import "./tooltip.css";
 import Comment from "./Comment";
 import Modal from "./Modal";
-export default function PostCard({ obj, allpost, setAllpost }) {
+import { useDispatch, useSelector } from "react-redux";
+import { setcurrentuser, setpost } from "../CounterSlice";
+export default function PostCard({ obj }) {
   const [commenttoggle,setcommenttoggle]=useState(true)
-  const [cu, scu] = useState(null);
+  const allpostimmutable=useSelector(state=>state.counter.allpost);
+  const allpost=allpostimmutable.map(post=>({...post}));
+  const cu=useSelector(state=>state.counter.currentUser);
   const [posttoggle, setposttoggle] = useState(false);
   const [loading, setloading] = useState(true);
   const commentbox = useRef();
-
+  const dispatch=useDispatch();
   
-  useEffect(() => {
-    setloading(false);
-    setAllpost(getFromLocalStorage("post"));
-    scu(getFromLocalStoragetwo("currentUser"));
-    // console.log("objadfadsf",obj);
-
-    // console.log(obj.text,obj.likedusername);
-
-    // setlikes(obj.likedusername.length)
-    setloading(true);
-  }, []);
+  
 
   const posttogglehandle = (e) => {
     e.preventDefault();
@@ -42,17 +36,22 @@ export default function PostCard({ obj, allpost, setAllpost }) {
 
       if (valueWithTrim) {
         const allpostCopy = [...allpost];
-        const postIndex = allpostCopy.findIndex((post) => post === obj);
+        const postIndex = allpostCopy.findIndex((post) => post.timeofcreate === obj.timeofcreate);
         if (postIndex !== -1) {
-          allpostCopy[postIndex].comment.unshift({
+          const postCopy = {
+            ...allpostCopy[postIndex],
+            comment: [...allpostCopy[postIndex].comment]
+          };
+          postCopy.comment.unshift({
             text: valueWithTrim,
             id: Date.now(),
             creator: cu,
             reply: [],
           });
+          allpostCopy[postIndex] = postCopy;
         }
-        setToLocalStorage("post", allpostCopy);
-        setAllpost(allpostCopy);
+        
+        dispatch(setpost(allpostCopy))
 
         e.target.value = "";
         e.target.blur();
@@ -67,8 +66,8 @@ export default function PostCard({ obj, allpost, setAllpost }) {
       alert("You can't delete others post");
       return;
     }
-    const postafterdelete = allpost.filter((post) => post != obj);
-    setAllpost(postafterdelete);
+    const postafterdelete = allpost.filter((post) => post.timeofcreate != obj.timeofcreate);
+    dispatch(setpost(postafterdelete));
     setposttoggle(false);
   };
 
@@ -83,13 +82,14 @@ export default function PostCard({ obj, allpost, setAllpost }) {
       alert("Please write something");
       return;
     }
-    const allpostcopy = [...allpost];
-    const index = allpostcopy.findIndex((post) => post == obj);
+    const pc=allpost;
+    const allpostcopy = [...pc];
+    
+    const index = allpostcopy.findIndex((post) => post.timeofcreate === obj.timeofcreate);
     if (index != -1) {
-      allpost[index].text = promptitem;
+      allpostcopy[index].text = promptitem;
     }
-    setToLocalStorage("post", allpostcopy);
-    setAllpost(allpostcopy);
+    dispatch(setpost(allpostcopy))
     setposttoggle(false);
   };
 
@@ -101,7 +101,7 @@ export default function PostCard({ obj, allpost, setAllpost }) {
       if (post.timeofcreate === obj.timeofcreate) {
         if (post.likedusername.includes(cu)) {
           const filteruser=post.likedusername.filter(liker=>liker!=cu);
-          console.log(filteruser);
+          // console.log(filteruser);
           return {
             ...post,
             likedusername:filteruser
@@ -116,8 +116,8 @@ export default function PostCard({ obj, allpost, setAllpost }) {
       return post;
     });
 
-    setAllpost(npc);
-    setToLocalStorage("post", npc);
+    
+    dispatch(setpost(npc));
     // console.log(npc)
     // setToLocalStorage("post",npc);
   };
@@ -462,14 +462,11 @@ export default function PostCard({ obj, allpost, setAllpost }) {
             </div>
           </div>
           {allpost?.map((post) => {
-            if (post === obj) {
+            if (post.timeofcreate === obj.timeofcreate) {
               // console.log(post.comment[0])
               return post.comment?.map((com, id) => (
                 <Comment
                   obj={obj}
-                  allpost={allpost}
-                  setAllpost={setAllpost}
-                  cu={cu}
                   com={com}
                   key={id}
                 />

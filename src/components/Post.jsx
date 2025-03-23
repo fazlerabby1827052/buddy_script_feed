@@ -2,20 +2,22 @@ import React, { useRef, useState } from "react";
 import PostCard from "./PostCard";
 import { getFromLocalStorage, setToLocalStorage } from "../utils/localstorage";
 import { useDispatch, useSelector } from "react-redux";
+import { setpost } from "../CounterSlice";
 
 const initPostObject = {
   text: "",
   creator: "",
   likedusername: [],
   comment: [],
-  timeofcreate: "",
+  timeofcreate: 0,
   dif:0,
 };
 
 
 
 export default function Post() {
-  const [allpost, setAllpost] = useState(getFromLocalStorage("post"));
+  const allpost=useSelector(state=>state.counter.allpost);
+  const dispatch=useDispatch();
   
   const inputRef = useRef();
   // const dispatch=useDispatch();
@@ -30,7 +32,7 @@ export default function Post() {
     likedusername: [],
     comment: [],
     dif:0,
-    timeofcreate: "",
+    timeofcreate: 0,
   };
 
   
@@ -47,12 +49,10 @@ export default function Post() {
       // allpost.unshift(postobj);
       const newpost=[postobj,...allpost];
       // setAllpost([postdata,allpost]);
-      console.log(newpost)
+      // console.log(newpost)
       
-      setToLocalStorage("post",newpost);
       inputRef.current.value=""
-
-      setAllpost(newpost);
+      dispatch(setpost(newpost))
       // console.log()
     }
     
@@ -580,10 +580,10 @@ export default function Post() {
                   dif = dif / 1000;
                   dif = dif / 60;
                   dif = Math.floor(dif);
-                  ele.dif=dif;
+                  // ele.dif=dif;
+                  const newobj={...ele,dif:dif};
 
-                  // return <PostCard allpost={allpost} setAllpost={setAllpost}  obj={ele} key={index}/>;
-                  return <PostCard obj={ele} allpost={allpost} setAllpost={setAllpost} key={index} />
+                  return <PostCard obj={newobj}  key={index} />
                 })}
               </div>
             </div>
